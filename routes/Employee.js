@@ -1,25 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const {Employee, PayCard, validateEmployee, validatePayCard} = require("../models/Employee");
+const {createEmployee} = require("../middleware/Employee");
 
 /* Creates an Employee 
 Test Success!*/
 router.post("/employee", async (req, res) => {
     try {
-       
         const { error } = validateEmployee(req.body);
         if(error) return res.status(400).send(error.details[0].message);
 
-        const employee = new Employee({
-            name: req.body.name,
-            payRate: req.body.payRate,
-            overTime: req.body.overTime,
-            workHistory: req.body.workHistory,
-            status: req.body.status,
-            daysAvail: req.body.daysAvail,
-        });
-
-        await employee.save();
+        const employee = await createEmployee(req.body);
 
         return res.send(employee);
     } catch (error) {
