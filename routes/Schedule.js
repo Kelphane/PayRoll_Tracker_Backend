@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const { Schedule, Shift, validateSchedule, validateShift } = require("../models/Schedule");
 const { Employee, validateEmployee } = require("../models/Employee");
-const { PayCard, validatePayCard } = require("../models/PayCard");
 
 /* Creates a Schedule
 Test Success! */
@@ -25,7 +24,8 @@ router.post("/schedule", async (req, res) => {
 });
 
 /* Creates a Shift
-Test Success! */
+Test Success! 
+Need to Break Into Smaller Parts At Some Point*/
 router.post("/schedule/:schId/shift", async (req, res) => {
     try{
         const { error } = validateShift(req.body);
@@ -68,34 +68,57 @@ router.post("/schedule/:schId/shift", async (req, res) => {
             profits: net,
         });
 
-        const payCards = [];
-
-        employee.map(em => {
-            let sum = 0;
-            if(shift.hours <= 8) sum = em.payRate * shift.hours;
-            if(shift.hours > 8) sum = (em.payRate * 8) + (em.overTime * (shift.hours - 8));
-            
-            payCards.push(new PayCard({
-                shift_id: shift._id,
-                employee_id: em._id,
-                payRate: em.payRate,
-                overTime: em.overTime,
-                hours: shift.hours,
-                paySum: sum,
-            }));
-        });
-
         schedule.totalHours += req.body.hours * req.body.employees.length;
         schedule.totalCost += cost;
         schedule.totalGross += req.body.gross;
         schedule.totalProfits += net;
         schedule.shifts.push(shift);
 
-        for(const pc of payCards) await pc.save();
         await schedule.save();
 
         return res.send(schedule);
     }catch(error){
+        return res.status(500).send(`Internal Server Error: ${error}`);
+    }
+});
+
+/* Deletes Schedule
+Testing Needed! */
+router.delete("/schedule/:id", async (req, res) => {
+    try {
+        const schedule = await Schedule.deleteOne({_id: req.params.id});
+        if(!schedule) return res.status(400).send("Couldn't Find Schedule!");
+
+        return res.send(schedule);
+    } catch (error) {
+        return res.status(500).send(`Internal Server Error: ${error}`);
+    }
+});
+
+/* Gets All Schedules
+ */
+router.get("/schedule", async (req, res) => {
+    try {
+        const schedule = await Schedule.find({}).
+            populate('shifts.employees');
+        if(!schedule) return res.status(400).send("Couldn't Find Schedule!");
+
+        return res.send(schedule);
+    } catch (error) {
+        return res.status(500).send(`Internal Server Error: ${error}`);
+    }
+});
+
+/* Gets Schedule By Id 
+Test Success! */
+router.get("/schedule/:schId", async (req, res) => {
+    try {
+        const schedule = await Schedule.findOne({_id: req.params.schId}).
+            populate('shifts.employees');
+        if(!schedule) return res.status(400).send("Couldn't Find Schedule!");
+
+        return res.send(schedule);
+    } catch (error) {
         return res.status(500).send(`Internal Server Error: ${error}`);
     }
 });
