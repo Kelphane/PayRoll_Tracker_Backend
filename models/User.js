@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const Joi = required("joi");
+const Joi = require("joi");
 const bcrypt = require("bcrypt");
 
 const userSchema = new Schema({
@@ -11,8 +11,8 @@ const userSchema = new Schema({
 const User = mongoose.model('User', userSchema);
 
 async function hashPassword(password){
-    const salt = bcrypt.genSalt(10);
-    const hash = await bcrypt.hash({password, salt});
+    const salt = 10;
+    const hash = await bcrypt.hash(password, salt);
     return hash;
 }
 
