@@ -16,6 +16,11 @@ async function hashPassword(password){
     return hash;
 }
 
+async function comparePasswords(password, hashedPW){
+    const result = await bcrypt.compare(password, hashedPW);
+    return result;
+}
+
 function validateUser(User){
     const schema = Joi.object({
         username: Joi.string().
@@ -30,6 +35,7 @@ function validateUser(User){
 module.exports = {
     User: User,
     hashPassword: hashPassword,
-    validateUser: validateUser
+    validateUser: validateUser,
+    comparePasswords: comparePasswords
 }
 
