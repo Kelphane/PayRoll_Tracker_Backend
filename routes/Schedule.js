@@ -96,7 +96,7 @@ router.delete("/schedule/:id", async (req, res) => {
 });
 
 /* Gets All Schedules
- */
+ Test Success! */
 router.get("/schedule", async (req, res) => {
     try {
         const schedule = await Schedule.find({}).

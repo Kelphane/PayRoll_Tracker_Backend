@@ -41,7 +41,7 @@ router.delete("/employee/:id", async (req, res) => {
 
 /* Updates Employee
 Test Success!*/
-router.put("/employee/:emId", async (req, res) => {
+router.put("/employee/:id", async (req, res) => {
     try {
         const employee = await Employee.findOne({_id: req.params.emId});
         if(!employee) return res.status(400).send("Couldn't Find Employee!");
