@@ -97,20 +97,6 @@ router.delete("/schedule/:schId", async (req, res) => {
     }
 });
 
-/* Gets All Schedules by User
- Test Success! */
-router.get("/schedule/:userId", async (req, res) => {
-    try {
-        const schedule = await Schedule.find({userId: req.params.userId}).
-            populate('shifts.employees');
-        if(!schedule) return res.status(400).send("Couldn't Find Schedule!");
-
-        return res.send(schedule);
-    } catch (error) {
-        return res.status(500).send(`Internal Server Error: ${error}`);
-    }
-});
-
 /* Gets Schedule By Id 
 Test Success! */
 router.get("/schedule/:schId", async (req, res) => {
@@ -125,8 +111,22 @@ router.get("/schedule/:schId", async (req, res) => {
     }
 });
 
+/* Gets All Schedules by User
+ Test Success! */
+ router.get("/schedule/user/:userId", async (req, res) => {
+    try {
+        const schedule = await Schedule.find({userId: req.params.userId}).
+            populate('shifts.employees');
+        if(!schedule) return res.status(400).send("Couldn't Find Schedule!");
+
+        return res.send(schedule);
+    } catch (error) {
+        return res.status(500).send(`Internal Server Error: ${error}`);
+    }
+});
+
 /* Gets Schedules by Month */
-router.get("/schedule/:month", async (req, res) => {
+router.get("/schedule/month/:month", async (req, res) => {
     try {
         const schedule = await Schedule.findOne({month: req.params.month}).
             populate('shifts.employees');

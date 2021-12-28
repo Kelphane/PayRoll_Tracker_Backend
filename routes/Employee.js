@@ -11,6 +11,7 @@ router.post("/employee", async (req, res) => {
         if(error) return res.status(400).send(error.details[0].message);
 
         const employee = new Employee({
+            userId: req.body.userId,
             name: req.body.name,
             payRate: req.body.payRate,
             overTime: req.body.overTime,
@@ -84,11 +85,11 @@ router.put("/employee/:id", async (req, res) => {
     }
 });
 
-/* GETS All Employees 
+/* GET Employee By ID 
 Test Success!*/
-router.get("/employee", async (req, res) => {
+router.get("/employee/:id", async (req, res) => {
     try {
-        const employee = await Employee.find();
+        const employee = await Employee.findOne({_id: req.params.id});
         if(!employee) return res.status(400).send("Couldn't Find Employees!");
 
         return res.send(employee);
@@ -97,11 +98,11 @@ router.get("/employee", async (req, res) => {
     }
 });
 
-/* GET Employee By ID 
+/* GETS All Employees by User
 Test Success!*/
-router.get("/employee/:id", async (req, res) => {
+router.get("/employee/user/:userId", async (req, res) => {
     try {
-        const employee = await Employee.findOne({_id: req.params.id});
+        const employee = await Employee.find({userId: req.params.userId});
         if(!employee) return res.status(400).send("Couldn't Find Employees!");
 
         return res.send(employee);
