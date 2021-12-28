@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { Schedule, Shift, validateSchedule, validateShift } = require("../models/Schedule");
-const { Employee, validateEmployee } = require("../models/Employee");
+const { Employee } = require("../models/Employee");
+const { User } = require("../models/User");
 
 /* Creates a Schedule
 Test Success! */
@@ -11,6 +12,7 @@ router.post("/schedule", async (req, res) => {
         if(error) return res.status(400).send(error.details[0].message);
 
         const schedule = new Schedule({
+            userId: req.body.userId,
             month: req.body.month,
             daysCovered: req.body.daysCovered,
         });
@@ -84,7 +86,7 @@ router.post("/schedule/:schId/shift", async (req, res) => {
 
 /* Deletes Schedule
 Testing Needed! */
-router.delete("/schedule/:id", async (req, res) => {
+router.delete("/schedule/:schId", async (req, res) => {
     try {
         const schedule = await Schedule.deleteOne({_id: req.params.id});
         if(!schedule) return res.status(400).send("Couldn't Find Schedule!");
@@ -95,11 +97,11 @@ router.delete("/schedule/:id", async (req, res) => {
     }
 });
 
-/* Gets All Schedules
+/* Gets All Schedules by User
  Test Success! */
-router.get("/schedule", async (req, res) => {
+router.get("/schedule/:userId", async (req, res) => {
     try {
-        const schedule = await Schedule.find({}).
+        const schedule = await Schedule.find({userId: req.params.userId}).
             populate('shifts.employees');
         if(!schedule) return res.status(400).send("Couldn't Find Schedule!");
 
@@ -114,6 +116,19 @@ Test Success! */
 router.get("/schedule/:schId", async (req, res) => {
     try {
         const schedule = await Schedule.findOne({_id: req.params.schId}).
+            populate('shifts.employees');
+        if(!schedule) return res.status(400).send("Couldn't Find Schedule!");
+
+        return res.send(schedule);
+    } catch (error) {
+        return res.status(500).send(`Internal Server Error: ${error}`);
+    }
+});
+
+/* Gets Schedules by Month */
+router.get("/schedule/:month", async (req, res) => {
+    try {
+        const schedule = await Schedule.findOne({month: req.params.month}).
             populate('shifts.employees');
         if(!schedule) return res.status(400).send("Couldn't Find Schedule!");
 

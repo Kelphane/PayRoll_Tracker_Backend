@@ -13,6 +13,7 @@ const shift = new Schema({
 });
 
 const schedule = new Schema({
+    userId: {type: Schema.Types.ObjectId, required: true, ref: 'User'},
     month: {type: String, required: true},
     daysCovered: {type: Array, required: true},
     shifts: [shift],
@@ -27,13 +28,9 @@ const Shift = mongoose.model("Shift", shift);
 
 function validateSchedule(Schedule){
     const schema = Joi.object({
+        userId: Joi.string().required(),
         month: Joi.string().required(),
-        daysCovered: Joi.array().required(),
-        shifts: Joi.array(),
-        totalHours: Joi.number(),
-        totalCost: Joi.number(),
-        totalGross: Joi.number(),
-        totalProfits: Joi.number(),
+        daysCovered: Joi.array().required()
     });
     return schema.validate(Schedule);
 };
