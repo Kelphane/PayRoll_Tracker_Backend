@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Joi = require("joi");
 
-const shift = new Schema({
+const shiftSchema = new Schema({
     month: {type: String, required: true},
     day: {type: Number, required: true},
     employees: [{type: Schema.Types.ObjectId, ref: 'Employee'}],
@@ -12,7 +12,7 @@ const shift = new Schema({
     profits: {type: Number, default: 0},
 });
 
-const schedule = new Schema({
+const scheduleSchema = new Schema({
     userId: {type: Schema.Types.ObjectId, required: true, ref: 'User'},
     month: {type: String, required: true},
     daysCovered: {type: Array, required: true},
@@ -23,8 +23,8 @@ const schedule = new Schema({
     totalProfits: {type: Number, default: 0}
 });
 
-const Schedule = mongoose.model("Schedule", schedule);
-const Shift = mongoose.model("Shift", shift);
+const Schedule = mongoose.model("Schedule", scheduleSchema);
+const Shift = mongoose.model("Shift", shiftSchema);
 
 function validateSchedule(Schedule){
     const schema = Joi.object({
