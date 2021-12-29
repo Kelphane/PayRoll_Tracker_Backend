@@ -16,7 +16,7 @@ const scheduleSchema = new Schema({
     userId: {type: Schema.Types.ObjectId, required: true, ref: 'User'},
     month: {type: String, required: true},
     daysCovered: {type: Array, required: true},
-    shifts: [shift],
+    shifts: [shiftSchema],
     totalHours: {type: Number, default: 0},
     totalCost: {type: Number, default: 0},
     totalGross: {type: Number, default: 0},
